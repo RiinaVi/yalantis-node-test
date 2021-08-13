@@ -1,0 +1,97 @@
+env:
+  browser: true
+  es6: true
+extends:
+  - plugin:@typescript-eslint/eslint-recommended
+  - plugin:@typescript-eslint/recommended
+  - plugin:@typescript-eslint/recommended-requiring-type-checking
+  - airbnb-typescript
+  - prettier
+globals:
+  Atomics: readonly
+  SharedArrayBuffer: readonly
+parser: '@typescript-eslint/parser'
+parserOptions:
+  project:
+    - ./tsconfig.json
+  ecmaVersion: 2018
+  sourceType: module
+plugins:
+  - '@typescript-eslint'
+  - prettier
+reportUnusedDisableDirectives: true
+overrides:
+  - files:
+      - '*.js'
+    rules:
+      '@typescript-eslint/no-var-requires': off
+      '@typescript-eslint/prefer-nullish-coalescing': off
+      '@typescript-eslint/no-unsafe-call': off
+      '@typescript-eslint/no-unsafe-member-access': off
+      '@typescript-eslint/no-unsafe-return': off
+      '@typescript-eslint/no-explicit-any': off
+  - files:
+      - '*.ts'
+    rules:
+      default-case: off
+      consistent-return: off
+  - files:
+      - 'src/migrations/*-*.ts'
+    rules:
+      '@typescript-eslint/no-explicit-any': off
+rules:
+  import/no-extraneous-dependencies:
+    - error
+    - devDependencies: true
+  #  prettier/prettier: error
+  '@typescript-eslint/no-unused-vars':
+    - error
+    - vars: local
+      varsIgnorePattern: '^[iI]gnored'
+      args: after-used
+      argsIgnorePattern: "^_|^ignored"
+      ignoreRestSiblings: true
+      caughtErrors: all
+      caughtErrorsIgnorePattern: '^ignored'
+  '@typescript-eslint/no-misused-promises':
+    - error
+    - checksVoidReturn: false
+  no-param-reassign:
+    - error
+    - props: false
+  import/extensions: off
+  import/no-unresolved: off
+  import/prefer-default-export: off
+  import/order: off
+  '@typescript-eslint/explicit-function-return-type': off
+  '@typescript-eslint/camelcase': off
+  '@typescript-eslint/no-empty-interface': off
+  '@typescript-eslint/naming-convention': off
+  no-underscore-dangle: off
+  no-console: off
+  '@typescript-eslint/no-use-before-define': off
+  no-nested-ternary: off
+  '@typescript-eslint/prefer-ts-expect-error': error
+  '@typescript-eslint/prefer-optional-chain': error
+  '@typescript-eslint/prefer-nullish-coalescing': error
+  '@typescript-eslint/no-unsafe-call': error
+  '@typescript-eslint/no-unsafe-member-access': error
+  '@typescript-eslint/no-unsafe-return': error
+  '@typescript-eslint/no-explicit-any': off
+  no-shadow:
+    - error
+    - allow:
+        - manager
+  class-methods-use-this: off
+  max-classes-per-file: off
+  import/no-cycle: off
+  no-await-in-loop: off
+  no-restricted-syntax:
+    - error
+    - selector: ForInStatement
+      message: 'for..in loops iterate over the entire prototype chain, which is virtually never what you want. Use Object.{keys,values,entries}, and iterate over the resulting array.'
+    - selector: LabeledStatement
+      message: 'Labels are a form of GOTO; using them makes code confusing and hard to maintain and understand.'
+    - selector: WithStatement
+      message: '`with` is disallowed in strict mode because it makes code impossible to predict and optimize.'
+  new-cap: off
