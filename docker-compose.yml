@@ -14,7 +14,7 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
     ports:
-      - ${+POSTGRES_PORT}:${+POSTGRES_PORT}
+      - +${POSTGRES_PORT}:+${POSTGRES_PORT}
   web:
     command: bash -c "while !</dev/tcp/postgres/5432;do sleep 1; done; npm run build; npm run typeorm:run; npm run start"
     build:
@@ -29,4 +29,4 @@ services:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PORT=${POSTGRES_PORT}
     ports:
-      - ${+PORT}:${+PORT}
+      - +${PORT}:+${PORT}
