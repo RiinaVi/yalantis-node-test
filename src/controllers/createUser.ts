@@ -1,15 +1,10 @@
 import { Request, Response } from 'express';
-import formidable, { Fields, File, Files } from 'formidable';
-import { v4 } from 'uuid';
-import fs from 'fs';
+import formidable, { File, Files } from 'formidable';
+import { getConnection } from 'typeorm';
 
-import {
-  createFileById,
-  createUserSchema,
-  DATA_FILE,
-  getAllUsersData,
-  getImageLink,
-} from '../utils';
+import { createImageById, createUserSchema, getImageLink } from '../utils';
+import UserRepository from '../repositories/UserRepository';
+import User from '../entities/User';
 
 const IMAGE_MAX_SIZE = 10_485_760; // 10MB in B
 const VALID_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/gif'];
@@ -18,7 +13,11 @@ const createUser = (req: Request, res: Response) => {
   const form = formidable({ multiples: true });
   form.parse(
     req,
-    async (err: Error, fields: Fields, files: Files & { image: File }) => {
+    async (
+      err: Error,
+      fields: Omit<User, 'id' | 'image'>,
+      files: Files & { image: File },
+    ) => {
       if (err) {
         console.error(err.message);
         return res.status(400).send({ error: { message: 'invalid payload' } });
@@ -49,21 +48,18 @@ const createUser = (req: Request, res: Response) => {
         });
       }
 
-      const newUserId = v4();
-      const fileName = await createFileById(newUserId, files.image);
+      const userRepository =
+        getConnection().getCustomRepository(UserRepository);
 
-      const newUserData = {
-        id: newUserId,
-        ...fields,
-        image: getImageLink(req, fileName),
-      };
+      const user = User.create(fields);
 
-      fs.writeFileSync(
-        DATA_FILE,
-        JSON.stringify([...getAllUsersData(), newUserData]),
-      );
+      const fileName = await createImageById(user.id, files.image);
 
-      res.send(newUserData);
+      user.image = getImageLink(req, fileName);
+
+      await userRepository.put(user);
+
+      res.send(user);
     },
   );
 };

@@ -1,24 +1,24 @@
 import { Request, Response } from 'express';
 import formidable, { Fields, File, Files } from 'formidable';
-import fs from 'fs';
+import { getConnection } from 'typeorm';
 
 import {
-  createFileById,
-  DATA_FILE,
-  deleteFileById,
-  getAllUsersData,
+  createImageById,
+  deleteImageById,
   getImageLink,
-  getUserData,
   updateUserSchema,
 } from '../utils';
+import UserRepository from '../repositories/UserRepository';
 
-const updateUser = (req: Request, res: Response) => {
+const updateUser = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const allUsers = getAllUsersData();
-  const userData = getUserData(id);
+
+  const userRepository = getConnection().getCustomRepository(UserRepository);
+
+  const userData = await userRepository.getById(id);
 
   if (!userData) {
-    return res.status(400).send({ error: { message: 'no such user found' } });
+    return res.status(404).send({ error: { message: 'no such user found' } });
   }
 
   const form = formidable({ multiples: true });
@@ -38,29 +38,19 @@ const updateUser = (req: Request, res: Response) => {
       }
 
       if (files.image) {
-        deleteFileById(id);
+        deleteImageById(id);
       }
 
       const userImage = files.image
-        ? getImageLink(req, await createFileById(id, files.image))
+        ? getImageLink(req, await createImageById(id, files.image))
         : userData.image;
 
-      const newUserData = {
-        id,
-        ...userData,
+      await userRepository.patch(id, {
         ...fields,
         image: userImage,
-      };
+      });
 
-      fs.writeFileSync(
-        DATA_FILE,
-        JSON.stringify([
-          ...allUsers.filter((user) => user.id !== id),
-          { ...newUserData },
-        ]),
-      );
-
-      res.send(newUserData);
+      res.send({ ...userData, ...fields, image: userImage });
     },
   );
 };

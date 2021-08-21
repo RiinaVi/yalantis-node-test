@@ -1,7 +1,14 @@
 import { Request, Response } from 'express';
+import { getConnection } from 'typeorm';
 
-import { getAllUsersData } from '../utils';
+import UserRepository from '../repositories/UserRepository';
 
-const getUsers = (req: Request, res: Response) => res.send(getAllUsersData());
+const getUsers = async (req: Request, res: Response) => {
+  const userRepository = getConnection().getCustomRepository(UserRepository);
+
+  const userData = await userRepository.list();
+
+  res.send(userData);
+};
 
 export default getUsers;
