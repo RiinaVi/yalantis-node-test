@@ -43,7 +43,7 @@ jobs:
           ssh-add ../private.key
 
           ssh-keyscan -p 22 3.86.110.7 >> ~/.ssh/known_hosts
-          chmod 644 ~/.ssh/known_hosts
+          chmod 400 ~/.ssh/known_hosts
       - name: run
         env:
           NODE_ENV: ${{ secrets.NODE_ENV }}
@@ -54,4 +54,4 @@ jobs:
           POSTGRES_PORT: ${{ secrets.POSTGRES_PORT }}
           POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
           DOCKER_HOST: ssh://ec2-user@3.86.110.7
-        run: docker-compose up -d
+        run: sudo docker-compose up -d
