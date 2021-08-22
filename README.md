@@ -6,6 +6,10 @@ To start the app run:
 docker-compose up
 ```
 
+You can try out deployed version of this project here:
+
+[ec2-3-86-110-7.compute-1.amazonaws.com:8080](http://ec2-3-86-110-7.compute-1.amazonaws.com:8080)
+
 # API Documentation
 
 ## Get users
