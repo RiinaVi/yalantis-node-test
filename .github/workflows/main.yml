@@ -32,7 +32,7 @@ jobs:
 #           mkdir -p ~/.ssh/
 #           echo "$SSH_PRIVATE_KEY" > ../private.key
 #           sudo chmod 600 ../private.key
-        shell: bash
+#         shell: bash
         run: |
           mkdir -p ~/.ssh/
 
@@ -40,7 +40,7 @@ jobs:
           sudo chmod 600 ../private.key
 
           ssh-agent -a $SSH_AUTH_SOCK
-          ssh-add -K ../private.key
+          ssh-add ../private.key
 
           ssh-keyscan -p 22 3.86.110.7 >> ~/.ssh/known_hosts
           chmod 644 ~/.ssh/known_hosts
