@@ -1,5 +1,6 @@
 import express, { Request, Response } from 'express';
 import dotenv from 'dotenv';
+import cors from 'cors';
 import bodyParser from 'body-parser';
 import { createConnection } from 'typeorm';
 
@@ -14,6 +15,8 @@ const PORT = process.env.PORT;
 
 const main = async () => {
   await createConnection();
+
+  app.use(cors());
 
   app.use(bodyParser.urlencoded({ extended: false }));
   app.use(bodyParser.json());
